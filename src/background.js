@@ -1,22 +1,27 @@
 // import axios from 'axios'
 import logo from './assets/logo.png';
-import { resetDrink } from '../utils/tool';
+import { resetDrink, initDrinkState } from '../utils/tool';
 
+chrome.alarms.onAlarm.addListener(function(alarm) {
+  if (alarm.name === 'test') {
+    console.log('触发提示');
+    chrome.storage.local.set({noticeTime: new Date().valueOf() + alarm.periodInMinutes * 60 * 1000},function(){});
+    chrome.notifications.create(null, {
+      type: "image",
+      iconUrl: logo,
+      imageUrl: logo,
+      title: "提醒喝水小助手",
+      message: `快去喝水！！！！！`,
+    });
+  }
+})
+
+initDrinkState();
 resetDrink();
 
 browser.runtime.onMessage.addListener(function (request) {
   const { type, info } = request;
   switch (type) {
-    case 'drinkWater': {
-      chrome.notifications.create(null, {
-        type: "image",
-        iconUrl: logo,
-        imageUrl: logo,
-        title: "提醒喝水小助手",
-        message: `看到此消息的人可以和我一起来喝一杯水。及时排便洗手，记得关门。后的我继续提醒大家喝水。和我一起成为一天八杯水的人吧！`,
-      });
-      break;
-    }
     case 'resetDrink': {
       resetDrink(info);
       break;
