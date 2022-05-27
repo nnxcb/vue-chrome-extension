@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "__MSG_extName__",
+  "name": "噗噗",
   "homepage_url": "http://localhost:8080/",
-  "description": "A Vue Browser Extension",
+  "description": "vue-Chrome插件",
   "default_locale": "en",
   "permissions": ["tabs", "storage", "contextMenus", "notifications", "<all_urls>", "*://*/*"],
   "icons": {
@@ -16,7 +16,7 @@
   },
   "browser_action": {
     "default_popup": "popup.html",
-    "default_title": "__MSG_extName__",
+    "default_title": "噗噗",
     "default_icon": {
       "19": "icons/19.png",
       "38": "icons/38.png"
@@ -24,13 +24,13 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.bilibili.com/video/*"],
+      "matches": ["https://*/*", "http://*/*"],
       "js": ["js/jquery.js", "js/content-script.js"],
       "css": ["css/index.css"],
       "run_at": "document_start"
     },
     {
-      "matches": ["https://www.bilibili.com/video/*"],
+      "matches": ["https://*/*", "http://*/*"],
       "js": ["js/jquery.js", "js/bilibili.js"],
       "run_at": "document_end"
     }
