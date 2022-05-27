@@ -1,35 +1,31 @@
 <template>
   <div>
     <el-container>
-      <el-header height="24">B站小工具</el-header>
       <el-main>
-        <el-row :gutter="5">
-          <el-input
-            type="textarea"
-            :rows="2"
-            placeholder="请输入内容"
-            v-model="message"
-            class="mb-5"
-          >
-          </el-input>
-
-          <div>
-            <el-button @click="addComment">评论</el-button>
-          </div>
-        </el-row>
+        <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="selectMenu">
+          <el-menu-item index="1">美好一天</el-menu-item>
+          <el-menu-item index="2">鸭子喝水</el-menu-item>
+        </el-menu>
+        <wonderful-day v-show="activeIndex === '1'" />
+        <drink-water v-show="activeIndex === '2'" />
       </el-main>
     </el-container>
   </div>
 </template>
 
 <script>
+import wonderfulDay from './components/wonderfulDay.vue';
+import drinkWater from './components/drinkWater.vue';
+
 export default {
   name: 'App',
+  components: {
+    wonderfulDay,
+    drinkWater,
+  },
   data() {
     return {
-      message: '',
-      list: [],
-      open: false,
+      activeIndex: '1',
     }
   },
   created() {
@@ -37,34 +33,11 @@ export default {
       this.list = obj['list']
     })
   },
-  mounted() {
-    chrome.runtime.onMessage.addListener(function (
-      request,
-      sender,
-      sendResponse
-    ) {
-      console.log('收到来自content-script的消息：')
-      console.log(request, sender, sendResponse)
-      sendResponse('我是后台，我已收到你的消息：' + JSON.stringify(request))
-    })
-  },
   methods: {
-    sendMessageToContentScript(message, callback) {
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, message, function (response) {
-          if (callback) callback(response)
-        })
-      })
-    },
-    addComment() {
-      this.sendMessageToContentScript(
-        { cmd: 'addComment', message: this.message },
-        function () {
-          console.log('来自content的回复：' + response)
-        }
-      )
-    },
-  },
+    selectMenu(index) {
+      this.activeIndex = index;
+    }
+  }
 }
 </script>
 
@@ -72,6 +45,9 @@ export default {
 html {
   width: 400px;
   height: 400px;
+}
+body {
+  margin: 0;
 }
 
 .el-header,
@@ -89,10 +65,6 @@ html {
   flex-basis: auto;
   overflow: auto;
   box-sizing: border-box;
-  padding: 5px;
-}
-
-.el-row {
-  padding: 5px 0;
+  padding: 5px !important;
 }
 </style>
